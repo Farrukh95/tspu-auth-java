@@ -18,7 +18,7 @@ public class Authentificator {
 
     private final int OK = 200;
 
-    public void checkCredentails(String login, String password) throws AuthentificationException {
+    public String checkCredentails(String login, String password) throws AuthentificationException {
         final String API = Settings.instance().getApiEndpoint();
         final String POST = Settings.instance().getMethod();
         try {
@@ -30,7 +30,7 @@ public class Authentificator {
             if (status != OK) {
                 throw new AuthentificationException(status);
             }
-            printResponse(con);
+            return getResponse(con);
         } catch (MalformedURLException ex) {
             throw new AuthentificationException(String.format("Неверный URL %s", API));
         } catch (IOException ex) {
@@ -64,12 +64,14 @@ public class Authentificator {
         }
     }
 
-    private void printResponse(HttpURLConnection con) throws IOException {
+    private String getResponse(HttpURLConnection con) throws IOException {
         try (BufferedReader responseData = new BufferedReader(
                 new InputStreamReader(con.getInputStream()))) {
             String message = responseData.lines().collect(Collectors.joining("\n"));
-            System.out.println(message);
+            return message;
         }
     }
+    
+    
 
 }
